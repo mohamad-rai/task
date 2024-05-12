@@ -6,6 +6,8 @@ import { DB } from './common/const';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
+import { FileModule } from './file/file.module';
+import { File } from './file/entities/file.entity';
 
 @Module({
   imports: [
@@ -19,10 +21,11 @@ import { User } from './user/entities/user.entity';
       username: DB.USERNAME,
       password: DB.PASSWORD,
       database: DB.NAME,
-      entities: [User],
+      entities: [User, File],
       synchronize: true,
     }),
     UserModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,7 @@ export class FileService {
       fileType: file.fileType,
     };
 
+    console.log(process.env.JWT_SECRET);
     return this.fileRepository.insert(fileObject);
   }
 

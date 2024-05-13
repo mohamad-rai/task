@@ -22,13 +22,26 @@ export class AuthService {
     return null;
   }
 
-  login(user: User) {
+  async login(user: User) {
+    const payload = {
+      username: user.username,
+      profile: user.profileImageUrl,
+      admin: user.isAdmin,
+    };
+
+    return {
+      ...user,
+      accessToken: this.jwtService.sign(payload),
+      refreshToken: this.jwtService.sign(payload, { expiresIn: '1d' }),
+    };
+  }
+
+  async refreshToken(user: User) {
     const payload = {
       username: user.username,
     };
 
     return {
-      ...user,
       accessToken: this.jwtService.sign(payload),
     };
   }

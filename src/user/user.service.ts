@@ -10,7 +10,6 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'src/common/utils';
-import { UserValidator } from './validation/create.validation';
 import { File } from 'src/file/entities/file.entity';
 import { FileType } from 'src/file/interface/file.interface';
 
@@ -24,50 +23,46 @@ export class UserService {
   ) {}
 
   async create(user: CreateUserDto) {
-    const validating = UserValidator.validateUser(user);
-    if (!validating.validated) {
-      throw new HttpException(validating.message, HttpStatus.BAD_REQUEST);
-    }
     const isUserExists = await this.findOne([
       { email: user.email },
       { username: user.username },
+      { mobile: user.mobile },
     ]);
     if (isUserExists) {
       throw new HttpException('User exists!', HttpStatus.BAD_REQUEST);
     }
     user.password = await hash(user.password);
     const createdUser = await this.userRepository.insert(user);
+    delete user.password;
     return {
       ...user,
       id: createdUser.identifiers[0].id,
     };
   }
 
-  findAll() {
-    return this.userRepository.find();
+  async findAll() {
+    const users = await this.userRepository.find();
+    return users.map((user) => {
+      delete user.password;
+      return user;
+    });
   }
 
-  findOne(userFields: Partial<User> | Partial<User>[]) {
-    return this.userRepository.findOne({ where: userFields });
-  }
-
-  async findOneWithUsername(username: string) {
-    const user = await this.userRepository.findOne({ where: { username } });
-    if (!user) {
-      return null;
+  async findOne(userFields: Partial<User> | Partial<User>[]) {
+    const user = await this.userRepository.findOne({ where: userFields });
+    if (user) {
+      delete user.password;
     }
-    delete user.created_at;
-    delete user.updated_at;
-
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const validating = UserValidator.validateUser(updateUserDto);
-    if (!validating.validated) {
-      throw new HttpException(validating.message, HttpStatus.BAD_REQUEST);
-    }
-    return this.userRepository.update({ id }, updateUserDto);
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto | Omit<UpdateUserDto, 'isAdmin'>,
+  ) {
+    await this.userRepository.update({ id }, updateUserDto);
+    const updatedUser = await this.findOne({ id });
+    return updatedUser;
   }
 
   async updateProfile(userId: number, file: Express.Multer.File) {

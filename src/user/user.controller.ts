@@ -12,6 +12,10 @@ import {
   UploadedFile,
   HttpException,
   UseInterceptors,
+  ParseIntPipe,
+  NotFoundException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserService } from './user.service';
@@ -29,9 +33,14 @@ export class UserController {
 
   @UseGuards(AdminGuard)
   @Post()
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  )
   create(@Body() createUserDto: CreateUserDto) {
     try {
-      this.userService.create(createUserDto);
+      return this.userService.create(createUserDto);
     } catch (error) {
       console.log(error);
       return error;
@@ -49,11 +58,44 @@ export class UserController {
     }
   }
 
+  @Get('me')
+  async getProfile(@Req() req: IRequest) {
+    try {
+      const user = await this.userService.findOne({ id: req.user.id });
+      if (!user) {
+        throw new NotFoundException('User not found!');
+      }
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  @Patch('me')
+  @UsePipes(
+    new ValidationPipe({
+      skipMissingProperties: true,
+    }),
+  )
+  async updateProfile(@Req() req: IRequest, @Body() body: UpdateUserDto) {
+    try {
+      const { id } = req.user;
+      const updateUser = await this.userService.update(id, body);
+      return updateUser;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
   @UseGuards(AdminGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     try {
-      return this.userService.findOne({ id: +id });
+      const user = await this.userService.findOne({ id: id });
+      if (!user) {
+        throw new NotFoundException('User not found!');
+      }
     } catch (error) {
       console.log(error);
       return error;
@@ -62,20 +104,16 @@ export class UserController {
 
   @UseGuards(AdminGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UsePipes(
+    new ValidationPipe({
+      skipMissingProperties: true,
+    }),
+  )
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto & { isAdmin?: boolean },
+  ) {
     try {
-      return this.userService.update(+id, updateUserDto);
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  }
-
-  @Patch()
-  updateProfile(@Req() req: IRequest) {
-    try {
-      const { id } = req.user;
-      const updateUserDto: UpdateUserDto = req.body;
       return this.userService.update(id, updateUserDto);
     } catch (error) {
       console.log(error);

@@ -1,7 +1,10 @@
+import { File } from 'src/file/entities/file.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,6 +13,12 @@ import {
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
 
   @Column()
   email: string;
@@ -26,8 +35,9 @@ export class User {
   @Column('boolean', { default: false })
   isAdmin: boolean = false;
 
-  @Column()
-  profileImageUrl: string;
+  @OneToOne(() => File, { cascade: true })
+  @JoinColumn()
+  profileImage: File;
 
   @CreateDateColumn()
   created_at: Date;

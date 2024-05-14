@@ -1,9 +1,11 @@
+import { User } from 'src/user/entities/user.entity';
+
 export interface IFile {
   id?: number;
   originalName: string;
   savedName: string;
   fileType: FileType;
-  creator?: string;
+  creator: User;
 }
 
 export enum FileType {

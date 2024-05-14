@@ -12,3 +12,5 @@ export const DB = {
 export const PRODUCTION_MODE = process.env.PRODUCTION_MODE === 'true';
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'adlojiuvhgfr938';
+
+export const UPLOAD_PATH = './uploads';

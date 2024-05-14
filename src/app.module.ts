@@ -6,7 +6,6 @@ import { DB } from './common/const';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
-import { FileModule } from './file/file.module';
 import { File } from './file/entities/file.entity';
 import { AuthModule } from './auth/auth.module';
 
@@ -26,7 +25,6 @@ import { AuthModule } from './auth/auth.module';
       synchronize: true,
     }),
     UserModule,
-    FileModule,
     AuthModule,
   ],
   controllers: [AppController],

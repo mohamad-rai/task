@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
+import { File } from 'src/file/entities/file.entity';
 
 @Module({
   controllers: [AuthController],
@@ -19,7 +20,7 @@ import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
     RefreshJwtStrategy,
   ],
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, File]),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {

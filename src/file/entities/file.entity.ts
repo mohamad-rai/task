@@ -18,11 +18,6 @@ export class File {
   @Column()
   savedName: string;
 
-  // @OneToOne(() => User)
-  // @JoinColumn()
-  @Column({ nullable: true })
-  creator: string;
-
   @Column({
     type: 'enum',
     enum: FileType,

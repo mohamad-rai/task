@@ -32,6 +32,22 @@
 $ npm install
 ```
 
+## Environment Variables
+```bash
+# DB
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+
+# is production mode on or off?
+PRODUCTION_MODE=false
+
+# just some random key, its not a real project!
+JWT_SECRET=
+```
+
 ## Running the app
 
 ```bash

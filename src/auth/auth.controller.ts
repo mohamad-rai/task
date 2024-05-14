@@ -7,6 +7,8 @@ import {
   HttpException,
   UseGuards,
   Req,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
@@ -34,8 +36,13 @@ export class AuthController {
   }
 
   @Post('register')
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
+  )
   async registerUser(@Body() createUserDto: CreateUserDto) {
-    return await this.userService.create(createUserDto);
+    return await this.authService.signUp(createUserDto);
   }
 
   @UseGuards(RefreshJwtGuard)

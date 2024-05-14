@@ -8,6 +8,9 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { File } from './file/entities/file.entity';
 import { AuthModule } from './auth/auth.module';
+import { TaskModule } from './task/task.module';
+import { FileModule } from './file/file.module';
+import { Task } from './task/entities/task.entity';
 
 @Module({
   imports: [
@@ -21,11 +24,13 @@ import { AuthModule } from './auth/auth.module';
       username: DB.USERNAME,
       password: DB.PASSWORD,
       database: DB.NAME,
-      entities: [User, File],
+      entities: [User, File, Task],
       synchronize: true,
     }),
     UserModule,
     AuthModule,
+    TaskModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

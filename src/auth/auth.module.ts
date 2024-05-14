@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
 import { File } from 'src/file/entities/file.entity';
+import { FileService } from 'src/file/file.service';
 
 @Module({
   controllers: [AuthController],
@@ -17,6 +18,7 @@ import { File } from 'src/file/entities/file.entity';
     JwtStrategy,
     UserService,
     LocalStrategy,
+    FileService,
     RefreshJwtStrategy,
   ],
   imports: [

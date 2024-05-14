@@ -1,9 +1,11 @@
 import { File } from 'src/file/entities/file.entity';
+import { Task } from 'src/task/entities/task.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -38,6 +40,12 @@ export class User {
   @OneToOne(() => File, { cascade: true })
   @JoinColumn()
   profileImage: File;
+
+  @OneToMany(() => Task, (task) => task.creator, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  tasks: Task[];
 
   @CreateDateColumn()
   created_at: Date;

@@ -6,15 +6,17 @@ import { User } from './entities/user.entity';
 import { File } from '../file/entities/file.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { multerStorageConfig } from 'src/config/multer.config';
+import { Task } from 'src/task/entities/task.entity';
+import { FileService } from 'src/file/file.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, File]),
+    TypeOrmModule.forFeature([User, Task, File]),
     MulterModule.register({
       ...multerStorageConfig,
     }),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, FileService],
 })
 export class UserModule {}

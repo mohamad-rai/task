@@ -12,6 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { hash } from 'src/common/utils';
 import { File } from 'src/file/entities/file.entity';
 import { FileType } from 'src/file/interface/file.interface';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class UserService {
@@ -20,6 +21,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(File)
     private readonly fileRepository: Repository<File>,
+    private readonly fileService: FileService,
   ) {}
 
   async create(user: CreateUserDto) {
@@ -77,12 +79,10 @@ export class UserService {
       throw new NotFoundException('User not found!');
     }
 
-    let profileImage: File = user.profileImage || new File();
-    profileImage.originalName = file.originalname;
-    profileImage.savedName = file.filename;
-    profileImage.fileType = FileType.PROFILE;
-
-    profileImage = await this.fileRepository.save(profileImage);
+    const profileImage: File = this.fileService.createFile(
+      file,
+      FileType.PROFILE,
+    );
 
     user.profileImage = profileImage;
 
